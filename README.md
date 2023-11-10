@@ -1,7 +1,10 @@
 # viam-fan-controller
+
+[![Go](https://github.com/viam-soleng/viam-fan-controller/actions/workflows/go.yml/badge.svg)](https://github.com/viam-soleng/viam-fan-controller/actions/workflows/go.yml)
+
 A module to control fans based on temperature sensors connected to Viam.
 
-This module offers 2 kinds of fan controls: PWM and On/Off.
+This module offers 2 kinds of fan controls: [PWM](#pwm) and [On/Off](#onoff-fan).
 
 ## PWM
 
