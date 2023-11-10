@@ -36,8 +36,8 @@ type Config struct {
 	SensorValueRegex *regexp.Regexp
 	OnTemperature    float64
 	OffTemperature   float64
-	OnDelay          int64
-	OffDelay         int64
+	OnDelay          time.Duration
+	OffDelay         time.Duration
 	LastStateChange  time.Time
 }
 
@@ -106,8 +106,8 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 	c.SensorValueField = newConf.SensorValueField
 	c.OnTemperature = newConf.OnTemperature
 	c.OffTemperature = newConf.OffTemperature
-	c.OnDelay = newConf.OnDelay
-	c.OffDelay = newConf.OffDelay
+	c.OnDelay = time.Duration(newConf.OnDelay * int64(time.Second))
+	c.OffDelay = time.Duration(newConf.OffDelay * int64(time.Second))
 
 	// We might not always get a regex, some sensors just return a number that can be parsed
 	if newConf.SensorValueRegex != "" {
@@ -142,15 +142,13 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 						break
 					}
 
-					// If the current temp is calling for the fan to be on, and the fan isn't on, and the last state change was long enough ago, turn the fan on
-					if currentTemp > c.OnTemperature && !isRunning && c.LastStateChange.Add(time.Duration(c.OnDelay)).UnixMilli() < time.Now().UnixMilli() {
+					if shouldTurnFanOn(currentTemp, c.OnTemperature, isRunning, c.OnDelay, c.LastStateChange) {
 						c.logger.Infof("Turning fan on")
 						c.FanPin.Set(ctx, true, nil)
 						c.LastStateChange = time.Now()
 					}
 
-					// If the current temp is calling for the fan to be off, and the fan is on, and the last state change was long enough ago, turn the fan off
-					if currentTemp < c.OffTemperature && isRunning && c.LastStateChange.Add(time.Duration(c.OffDelay)).UnixMilli() < time.Now().UnixMilli() {
+					if shouldTurnFanOff(currentTemp, c.OffTemperature, isRunning, c.OffDelay, c.LastStateChange) {
 						c.logger.Infof("Turning fan off")
 						c.FanPin.Set(ctx, false, nil)
 						c.LastStateChange = time.Now()
@@ -205,4 +203,14 @@ func (c *Config) Close(ctx context.Context) error {
 
 func (c *Config) Ready(ctx context.Context, extra map[string]interface{}) (bool, error) {
 	return false, nil
+}
+
+// If the current temp is calling for the fan to be on, and the fan isn't on, and the last state change was long enough ago, turn the fan on
+func shouldTurnFanOn(currentTemp float64, onTemp float64, isRunning bool, onDelay time.Duration, lastStateChange time.Time) bool {
+	return currentTemp >= onTemp && !isRunning && lastStateChange.Add(onDelay).UnixMilli() < time.Now().UnixMilli()
+}
+
+// If the current temp is calling for the fan to be off, and the fan is on, and the last state change was long enough ago, turn the fan off
+func shouldTurnFanOff(currentTemp float64, offTemp float64, isRunning bool, offDelay time.Duration, lastStateChange time.Time) bool {
+	return currentTemp < offTemp && isRunning && lastStateChange.Add(offDelay).UnixMilli() < time.Now().UnixMilli()
 }

@@ -2,6 +2,7 @@ package pwm_fan
 
 import (
 	"context"
+	"errors"
 	"regexp"
 	"sort"
 	"strconv"
@@ -150,12 +151,10 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 						break
 					}
 
-					var desiredSpeed float64
-					for _, targetTemp := range c.Temps {
-						if currentTemp >= targetTemp {
-							desiredSpeed = c.TemperatureTable[targetTemp]
-							break
-						}
+					desiredSpeed, err := getDesiredSpeed(currentTemp, c.Temps, c.TemperatureTable)
+					if err != nil {
+						c.logger.Errorf("Error getting desired speed: %s", err)
+						break
 					}
 
 					c.logger.Debugf("Current temperature: %f, desired speed: %f", currentTemp, desiredSpeed)
@@ -213,4 +212,14 @@ func (c *Config) Close(ctx context.Context) error {
 
 func (c *Config) Ready(ctx context.Context, extra map[string]interface{}) (bool, error) {
 	return false, nil
+}
+
+func getDesiredSpeed(currentTemp float64, temps []float64, tempTable map[float64]float64) (float64, error) {
+	for _, targetTemp := range temps {
+		if currentTemp >= targetTemp {
+			return tempTable[targetTemp], nil
+		}
+	}
+
+	return 0, errors.New("temperature not found in table")
 }
