@@ -1,0 +1,17 @@
+{
+  "module_id": "viam-soleng:viam-fan-controller",
+  "visibility": "public",
+  "url": "https://github.com/viam-soleng/viam-fan-controller",
+  "description": "A simple fan controller for Viam that can control simple on/off fans or PWM fans driven by a temperature sensor.",
+  "models": [
+    {
+      "api": "rdk:component:sensor",
+      "model": "viam-soleng:fan:pwm"
+    },
+    {
+      "api": "rdk:component:sensor",
+      "model": "viam-soleng:fan:onoff"
+    }
+  ],
+  "entrypoint": "viam-fan-controller"
+}

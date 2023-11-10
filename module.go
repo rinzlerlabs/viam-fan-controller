@@ -8,8 +8,8 @@ import (
 	"go.viam.com/rdk/module"
 	"go.viam.com/utils"
 
+	"github.com/viam-soleng/viam-fan-controller/on_off_fan"
 	"github.com/viam-soleng/viam-fan-controller/pwm_fan"
-	"github.com/viam-soleng/viam-fan-controller/simple_fan"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func mainWithArgs(ctx context.Context, args []string, logger logging.Logger) (er
 		return err
 	}
 
-	err = custom_module.AddModelFromRegistry(ctx, sensor.API, simple_fan.Model)
+	err = custom_module.AddModelFromRegistry(ctx, sensor.API, on_off_fan.Model)
 	if err != nil {
 		return err
 	}

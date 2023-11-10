@@ -1,4 +1,4 @@
-package simple_fan
+package on_off_fan
 
 import (
 	"context"
@@ -15,9 +15,9 @@ import (
 	"github.com/viam-soleng/viam-fan-controller/utils"
 )
 
-var Model = resource.NewModel("viam-soleng", "fan", "simple")
+var Model = resource.NewModel("viam-soleng", "fan", "onoff")
 var PrettyName = "Raspberry Pi Clock Sensor"
-var Description = "Simple PWM fan controller for Viam"
+var Description = "An on/Off fan controller for Viam"
 var Version = utils.Version
 
 type Config struct {

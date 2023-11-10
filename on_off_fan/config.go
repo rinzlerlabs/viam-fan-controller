@@ -1,4 +1,4 @@
-package simple_fan
+package on_off_fan
 
 import "errors"
 
