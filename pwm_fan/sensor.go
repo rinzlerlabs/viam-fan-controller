@@ -2,7 +2,6 @@ package pwm_fan
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"sort"
 	"strconv"
@@ -38,7 +37,7 @@ type Config struct {
 	Temps            []float64
 	Sensor           sensor.Sensor
 	SensorValueField string
-	SensorValueRegex regexp.Regexp
+	SensorValueRegex *regexp.Regexp
 }
 
 func init() {
@@ -104,7 +103,7 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 	c.FanPin = fanPin
 	c.Sensor = sensor
 	c.SensorValueField = newConf.SensorValueField
-	c.SensorValueRegex = *regexp.MustCompile(newConf.SensorValueRegex)
+	c.SensorValueRegex = regexp.MustCompile(newConf.SensorValueRegex)
 
 	tempTable := make(map[float64]float64)
 	temps := make([]float64, 0, len(newConf.TemperatureTable))
@@ -139,11 +138,18 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 				case <-c.done:
 					return
 				default:
-					currentTemp, err := c.getCurrentTemperature(ctx)
+					readings, err := c.Sensor.Readings(ctx, nil)
 					if err != nil {
-						c.logger.Errorf("Error getting current temperature: %s", err)
+						c.logger.Errorf("Error getting readings from sensor: %s", err)
 						break
 					}
+
+					currentTemp, err := utils.ParseCurrentTemperatureFromReadings(ctx, readings, c.SensorValueField, c.SensorValueRegex, c.logger)
+					if err != nil {
+						c.logger.Errorf("Error parsing current temperature: %s", err)
+						break
+					}
+
 					var desiredSpeed float64
 					for _, targetTemp := range c.Temps {
 						if currentTemp >= targetTemp {
@@ -169,45 +175,18 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 	return nil
 }
 
-func (c *Config) getCurrentTemperature(ctx context.Context) (float64, error) {
-	readings, err := c.Sensor.Readings(ctx, nil)
-	if err != nil {
-		c.logger.Errorf("Error reading sensor: %s", err)
-	}
-	switch readings[c.SensorValueField].(type) {
-	case float32:
-		return float64(readings[c.SensorValueField].(float32)), nil
-	case float64:
-		return readings[c.SensorValueField].(float64), nil
-	case int:
-		return float64(readings[c.SensorValueField].(int)), nil
-	case int32:
-		return float64(readings[c.SensorValueField].(int32)), nil
-	case int64:
-		return float64(readings[c.SensorValueField].(int64)), nil
-	case string:
-		rawCurrentTemp := readings[c.SensorValueField].(string)
-		if rawCurrentTemp == "" {
-			c.logger.Errorf("Error reading sensor, field %s not found", c.SensorValueField)
-			return 0, fmt.Errorf("error reading sensor, field %s not found", c.SensorValueField)
-		}
-		currentTempString := c.SensorValueRegex.FindString(rawCurrentTemp)
-		if currentTempString == "" {
-			c.logger.Errorf("Error reading sensor, no match to regex in %s", currentTempString)
-			return 0, fmt.Errorf("error reading sensor, no match to regex in %s", currentTempString)
-		}
-		return strconv.ParseFloat(currentTempString, 64)
-	default:
-		c.logger.Errorf("Error reading sensor, field %s is unknown type", c.SensorValueField)
-		return 0, fmt.Errorf("error reading sensor, field %s is unknown type", c.SensorValueField)
-	}
-}
-
 func (c *Config) Readings(ctx context.Context, extra map[string]interface{}) (map[string]interface{}, error) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	currentTemp, err := c.getCurrentTemperature(ctx)
+	readings, err := c.Sensor.Readings(ctx, nil)
 	if err != nil {
+		c.logger.Errorf("Error getting readings from sensor: %s", err)
+		return nil, err
+	}
+
+	currentTemp, err := utils.ParseCurrentTemperatureFromReadings(ctx, readings, c.SensorValueField, c.SensorValueRegex, c.logger)
+	if err != nil {
+		c.logger.Errorf("Error parsing current temperature: %s", err)
 		return nil, err
 	}
 
