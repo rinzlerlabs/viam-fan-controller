@@ -58,6 +58,7 @@ func NewSensor(ctx context.Context, deps resource.Dependencies, conf resource.Co
 		cancelCtx:  cancelCtx,
 		cancelFunc: cancelFunc,
 		mu:         sync.RWMutex{},
+		done:       make(chan bool),
 	}
 
 	if err := b.Reconfigure(ctx, deps, conf); err != nil {
@@ -164,7 +165,12 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 					}
 				}
 
-				time.Sleep(100 * time.Millisecond)
+				select {
+				case <-time.After(100 * time.Millisecond):
+					continue
+				case <-c.done:
+					return
+				}
 			}
 		}
 
