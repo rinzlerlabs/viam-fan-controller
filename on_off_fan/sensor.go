@@ -103,7 +103,7 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 	c.Board = &board
 	c.FanPin = fanPin
 	c.Sensor = sensor
-	c.SensorValueField = newConf.SensorValueField
+	c.SensorValueField = newConf.SensorValueKey
 	c.OnTemperature = newConf.OnTemperature
 	c.OffTemperature = newConf.OffTemperature
 	c.OnDelay = time.Duration(newConf.OnDelay * int64(time.Second))

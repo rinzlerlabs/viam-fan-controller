@@ -104,7 +104,7 @@ func (c *Config) Reconfigure(ctx context.Context, deps resource.Dependencies, co
 	c.Board = &board
 	c.FanPin = fanPin
 	c.Sensor = sensor
-	c.SensorValueField = newConf.SensorValueField
+	c.SensorValueField = newConf.SensorValueKey
 	c.SensorValueRegex = regexp.MustCompile(newConf.SensorValueRegex)
 
 	tempTable := make(map[float64]float64)

@@ -6,7 +6,7 @@ type CloudConfig struct {
 	BoardName        string  `json:"board_name"`
 	FanPin           string  `json:"fan_pin"`
 	SensorName       string  `json:"sensor_name"`
-	SensorValueField string  `json:"sensor_value_field"`
+	SensorValueKey   string  `json:"sensor_value_key"`
 	SensorValueRegex string  `json:"sensor_value_regex"`
 	OnTemperature    float64 `json:"on_temperature"`
 	OffTemperature   float64 `json:"off_temperature"`
@@ -27,8 +27,8 @@ func (conf *CloudConfig) Validate(path string) ([]string, error) {
 		return nil, errors.New("sensor_name is required")
 	}
 
-	if conf.SensorValueField == "" {
-		return nil, errors.New("sensor_value_field is required")
+	if conf.SensorValueKey == "" {
+		return nil, errors.New("sensor_value_key is required")
 	}
 
 	if conf.OnTemperature == 0 {
