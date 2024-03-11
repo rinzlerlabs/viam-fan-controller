@@ -117,7 +117,8 @@ Edit the values in the template as necessary, then click **Save config**.
 > [!NOTE]
 > For more information, see [Configure a Machine](https://docs.viam.com/manage/configuration/).
 
-The config for a simple On/Off fan requires:
+The following attributes are available for `viam-soleng:fan:onoff` fans:
+
 | Name | Type | Inclusion | Description |
 | ---- | -----| --------- | ----------- |
 | board_name | string | **Required** | The `name` of the board that provides access to the GPIO pin to control the fan. |
