@@ -15,13 +15,16 @@ import (
 	"go.viam.com/rdk/resource"
 	viam_utils "go.viam.com/utils"
 
-	"github.com/viam-soleng/viam-fan-controller/utils"
+	"github.com/rinzlerlabs/viam-fan-controller/utils"
 )
 
-var Model = resource.NewModel("viam-soleng", "fan", "pwm")
-var PrettyName = "Raspberry Pi Clock Sensor"
-var Description = "Simple PWM fan controller for Viam"
-var Version = utils.Version
+var (
+	Model       = resource.NewModel("rinzlerlabs", "fan", "pwm")
+	API         = sensor.API
+	PrettyName  = "PWM Fan Controller"
+	Description = "Simple PWM fan controller for Viam"
+	Version     = utils.Version
+)
 
 type Config struct {
 	resource.Named

@@ -1,6 +1,6 @@
 # viam-fan-controller modular resource
 
-[![Go](https://github.com/viam-soleng/viam-fan-controller/actions/workflows/go.yml/badge.svg)](https://github.com/viam-soleng/viam-fan-controller/actions/workflows/go.yml)
+[![Go](https://github.com/rinzlerlabs/viam-fan-controller/actions/workflows/go.yml/badge.svg)](https://github.com/rinzlerlabs/viam-fan-controller/actions/workflows/go.yml)
 
 A module to control a fan with feedback from temperature sensors connected to Viam.
 
@@ -12,7 +12,7 @@ A PWM fan allows for variable speed control. Fans typically require too much pow
 
 ### Build and run PWM fan
 
-To use this module, follow the instructions to [add a module from the Viam Registry](https://docs.viam.com/registry/configure/#add-a-modular-resource-from-the-viam-registry) and select the `viam-soleng:fan:pwm` model from the [`viam-fan-controller` module](https://app.viam.com/module/viam-soleng/viam-fan-controller).
+To use this module, follow the instructions to [add a module from the Viam Registry](https://docs.viam.com/registry/configure/#add-a-modular-resource-from-the-viam-registry) and select the `rinzlerlabs:fan:pwm` model from the [`viam-fan-controller` module](https://app.viam.com/module/rinzlerlabs/viam-fan-controller).
 
 ### Configure your PWM fan
 
@@ -47,7 +47,7 @@ Edit the values in the template as necessary, then click **Save config**.
 
 #### Attributes
 
-The following attributes are available for `viam-soleng:fan:pwm` fans:
+The following attributes are available for `rinzlerlabs:fan:pwm` fans:
 
 | Name | Type | Inclusion | Description |
 | ---- | ---- | --------- | ----------- |
@@ -85,7 +85,7 @@ A simple on/off fan does just that, it is either on or off. This is a useful for
 
 ### Build and run on/off fan
 
-To use this module, follow the instructions to [add a module from the Viam Registry](https://docs.viam.com/registry/configure/#add-a-modular-resource-from-the-viam-registry) and select the `viam-soleng:fan:onoff` model from the [`viam-fan-controller` module](https://app.viam.com/module/viam-soleng/viam-fan-controller).
+To use this module, follow the instructions to [add a module from the Viam Registry](https://docs.viam.com/registry/configure/#add-a-modular-resource-from-the-viam-registry) and select the `rinzlerlabs:fan:onoff` model from the [`viam-fan-controller` module](https://app.viam.com/module/rinzlerlabs/viam-fan-controller).
 
 ### Configure your on/off fan
 
@@ -117,7 +117,7 @@ Edit the values in the template as necessary, then click **Save config**.
 > [!NOTE]
 > For more information, see [Configure a Machine](https://docs.viam.com/manage/configuration/).
 
-The following attributes are available for `viam-soleng:fan:onoff` fans:
+The following attributes are available for `rinzlerlabs:fan:onoff` fans:
 
 | Name | Type | Inclusion | Description |
 | ---- | -----| --------- | ----------- |

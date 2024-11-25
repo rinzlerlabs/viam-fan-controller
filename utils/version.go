@@ -1,3 +1,7 @@
 package utils
 
-var Version = "v0.0.2"
+var (
+	Version    = "0.0.3"
+	LoggerName = "fan-controller"
+	Namespace  = "rinzlerlabs"
+)
